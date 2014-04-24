@@ -169,51 +169,50 @@ int main(void)
     {
         glfwPollEvents();
 
+        // Reset the matrix stack
+        reset_to_identity(matrix_stack);
+
         // Update camera position and direction
         turn_view(window, &cam_dir);
         move_position(window, &cam_pos, &cam_dir);
         // Reset the mouse to the middle of the screen
         glfwSetCursorPos(window, WINDOW_WIDTH/2.0, WINDOW_HEIGHT/2.0);
-        // Now that we have it, generate a view matrix
-        generate_view_matrix(view_matrix, &cam_pos, &cam_dir, &e_y);
-        glUniformMatrix4fv(glGetUniformLocation(shader, "view_matrix"), 1, GL_FALSE, view_matrix);
+
+        // Generate translation matrix
+        generate_translation_matrix(tmp_transform_matrix, &cam_pos);
+        // Add it in the stack
+        add_matrix_to_stack(matrix_stack, tmp_transform_matrix, tmp_multiplication_matrix);
+        tmp_switch_matrix = matrix_stack;
+        matrix_stack = tmp_multiplication_matrix;
+        tmp_multiplication_matrix = tmp_switch_matrix;
+
+        // Generate view matrix for rotation
+        generate_view_matrix(tmp_transform_matrix, &cam_dir, &e_y);
+        // Add it in the stack
+        add_matrix_to_stack(matrix_stack, tmp_transform_matrix, tmp_multiplication_matrix);
+        tmp_switch_matrix = matrix_stack;
+        matrix_stack = tmp_multiplication_matrix;
+        tmp_multiplication_matrix = tmp_switch_matrix;
+
+        // Add in the projection matrix
+        add_matrix_to_stack(matrix_stack, projection_matrix, tmp_multiplication_matrix);
+        tmp_switch_matrix = matrix_stack;
+        matrix_stack = tmp_multiplication_matrix;
+        tmp_multiplication_matrix = tmp_switch_matrix;
+
+        // Send off matrix stack to the graphics card
+        glUniformMatrix4fv(glGetUniformLocation(shader, "matrix_stack"), 1, GL_FALSE, matrix_stack);
+
         // Clear screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Draw
+        // Draw everything
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         //Force display to be drawn now
         glFlush();
         glfwSwapBuffers(window);
     }
-//    while (!glfwWindowShouldClose(window))
-//    {
-//        glfwPollEvents();
-//
-//        // Rotate the camera as necessary
-//        turn_view(window, &cam_dir);
-//        // Reset the mouse to the middle of the screen
-//        glfwSetCursorPos(window, WINDOW_WIDTH/2.0, WINDOW_HEIGHT/2.0);
-//        // Handle movement
-//        move_position(window, &cam_pos, &cam_dir);
-//
-////        printf("\nPosition: (%f|%f|%f)\tDirection: (%f|%f|%f)\n", cam_pos.x, cam_pos.y, cam_pos.z, cam_dir.x, cam_dir.y, cam_dir.z);
-////        fflush(stdout);
-//
-//        // Backup the coordinate system (to not cumulate transformations)
-//        glPushMatrix();
-//
-//        // Apply changes in camera position and view direction
-//        update_view(cam_pos, cam_dir);
-//
-//        // Render
-//        render(num_vertices);
-//        glfwSwapBuffers(window);
-//
-//        // Restore non-transformed coordinate system
-//        glPopMatrix();
-//    }
 
     glfwTerminate();
     return 0;
