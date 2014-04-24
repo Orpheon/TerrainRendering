@@ -150,12 +150,15 @@ int main(void)
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
-    // Generate the projection matrix
+    // Allocate all the different matrices we'll need
+    GLfloat *matrix_stack = calloc(16, sizeof(GLfloat));
+    GLfloat *tmp_transform_matrix = calloc(16, sizeof(GLfloat));
+    GLfloat *tmp_multiplication_matrix = calloc(16, sizeof(GLfloat));
+    GLfloat *tmp_switch_matrix;
     GLfloat *projection_matrix = calloc(16, sizeof(GLfloat));
-    generate_projection_matrix(projection_matrix, FOV, (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.5, VIEW_DISTANCE);
-    glUniformMatrix4fv(glGetUniformLocation(shader, "projection_matrix"), 1, GL_FALSE, projection_matrix);
 
-    GLfloat *view_matrix = calloc(16, sizeof(GLfloat));
+    // The projection matrix is constant, so we can set it once and for all
+    generate_projection_matrix(projection_matrix, FOV, (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.5, VIEW_DISTANCE);
 
     point e_y;
     e_y.x = 0;
