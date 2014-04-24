@@ -61,10 +61,12 @@ void generate_view_matrix(GLfloat *matrix, point *cam_pos, point *cam_dir, point
     // Side = cam_dir X up
     point side;
     cross(cam_dir, up, &side);
+    normalize(&side);
 
     // Rel up = side X cam_dir
     point relative_up;
     cross(&side, cam_dir, &relative_up);
+    normalize(&relative_up);
 
     // Column-major ordering, matrix[0*4 + 1] is right beneath matrix[0*4 + 0]
     matrix[0*4 + 0] = side.x;

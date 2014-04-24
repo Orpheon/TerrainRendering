@@ -9,5 +9,5 @@ varying vec4 position;
 void main()
 {
     position = vertex_position;
-    gl_Position = view_matrix * projection_matrix * vertex_position;
+    gl_Position = projection_matrix * view_matrix * vertex_position;
 }

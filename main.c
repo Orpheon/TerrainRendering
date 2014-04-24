@@ -235,7 +235,7 @@ void turn_view(GLFWwindow* window, point *cam_dir)
 
     // Get the vector from the center of the screen to current mouse position and normalize it relative to screen size
     mouse_x = (mouse_x - WINDOW_WIDTH/2.0) * HORIZONTAL_TURNSPEED / WINDOW_WIDTH;
-    mouse_y = (mouse_y - WINDOW_HEIGHT/2.0) * VERTICAL_TURNSPEED / WINDOW_HEIGHT;
+    mouse_y = -(mouse_y - WINDOW_HEIGHT/2.0) * VERTICAL_TURNSPEED / WINDOW_HEIGHT;
 
     // Rotate the view vector in accordance
     double tmp;
