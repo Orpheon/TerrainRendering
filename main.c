@@ -274,7 +274,7 @@ void move_position(GLFWwindow* window, point *cam_pos, point *cam_dir)
     {
         // Go forward/backward in the looking direction
         cam_pos->x += forward * CAMERA_SPEED * cam_dir->x;
-        cam_pos->y -= forward * CAMERA_SPEED * cam_dir->y;
+        cam_pos->y += forward * CAMERA_SPEED * cam_dir->y;
         cam_pos->z += forward * CAMERA_SPEED * cam_dir->z;
     }
 
