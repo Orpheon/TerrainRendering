@@ -20,116 +20,116 @@ void normalize(point *a)
     a->z /= length;
 }
 
-void generate_projection_matrix(GLfloat *matrix, double half_fov, double aspect, double nearDist, double farDist)
+void cross(point *a, point *b, point *result)
 {
-    //
-    // General form of the Projection Matrix
-    //
-    // uh = -Cot( fov/2 ) == -1/Tan(fov/2)
-    // uw / uh = 1/aspect
-    //
-    //   uw         0       0       0
-    //    0        uh       0       0
-    //    0         0      f/(f-n)  1
-    //    0         0    -fn/(f-n)  0
-
-    double oneOverDepth = 1 / (farDist - nearDist);
-    double oneOverTanFov = -1 / tan(half_fov);
-
-//    matrix[0]  = oneOverTanFov / aspect;
-//    matrix[1]  = 0;
-//    matrix[2]  = 0;
-//    matrix[3]  = 0;
-//
-//    matrix[4]  = 0;
-//    matrix[5]  = oneOverTanFov;
-//    matrix[6]  = 0;
-//    matrix[7]  = 0;
-//
-//    matrix[8]  = 0;
-//    matrix[9]  = 0;
-//    matrix[10] = -farDist * oneOverDepth;
-//    matrix[11] = -1;
-//
-//    matrix[12] = 0;
-//    matrix[13] = 0;
-//    matrix[14] = (-farDist * nearDist) * oneOverDepth;
-//    matrix[15] = 0;
-
-    // Source: http://www.terathon.com/gdc07_lengyel.pdf
-    matrix[0]  = oneOverTanFov;
-    matrix[1]  = 0;
-    matrix[2]  = 0;
-    matrix[3]  = 0;
-
-    matrix[4]  = 0;
-    matrix[5]  = oneOverTanFov / aspect;
-    matrix[6]  = 0;
-    matrix[7]  = 0;
-
-    matrix[8]  = 0;
-    matrix[9]  = 0;
-    matrix[10] = -(farDist + nearDist) * oneOverDepth;
-    matrix[11] = -1;
-
-    matrix[12] = 0;
-    matrix[13] = 0;
-    matrix[14] = -(2 * farDist * nearDist) * oneOverDepth;
-    matrix[15] = 0;
+    result->x = a->y*b->z - a->z*b->y;
+    result->y = a->z*b->x - a->x*b->z;
+    result->z = a->x*b->y - a->y*b->x;
 }
 
-void generate_view_matrix(GLfloat *matrix, point *cam_pos, point *cam_dir)
+void generate_projection_matrix(GLfloat *matrix, double fovx, double aspect, double nearDist, double farDist)
 {
-    // http://www.opengl.org/sdk/docs/man2/xhtml/gluLookAt.xml
-    // f = cam_dir, up = (0|1|0)
-    // s = normalize(f X up)
-    // u = s X f
-    double x = cam_dir->x, y = cam_dir->y, z = cam_dir->z;
-    double l = sqrt(z*z + x*x);
-    double s_x = -z/l, s_z = x/l;
-    double u_x = -s_z*y, u_y = s_z*x - s_x*z, u_z = s_x*y;
-    // 4x4 matrix
-    // 4th element is the translation
-    // s[0]  s[1]  s[2]  x
-    // u[0]  u[1]  u[2]  y
-    // -f[0] -f[1] -f[2] z
-    // 0     0     0     1
+    // Based on the gluPerspective implementation in java
+    double deltaDist = farDist - nearDist;
+    double cot = 1 / tan(fovx*M_PI / (2*aspect*180));
 
-    matrix[0]  = s_x;
-    matrix[1]  = u_x;
-    matrix[2]  = -x;
-    matrix[3]  = 0;
+    // Column-major ordering, matrix[0*4 + 1] is right beneath matrix[0*4 + 0]
+    matrix[0*4 + 0] = cot / aspect;
+    matrix[0*4 + 1] = 0;
+    matrix[0*4 + 2] = 0;
+    matrix[0*4 + 3] = 0;
 
-    matrix[4]  = 0;
-    matrix[5]  = u_y;
-    matrix[6]  = -y;
-    matrix[7]  = 0;
+    matrix[1*4 + 0] = 0;
+    matrix[1*4 + 1] = cot;
+    matrix[1*4 + 2] = 0;
+    matrix[1*4 + 3] = 0;
 
-    matrix[8]  = s_z;
-    matrix[9]  = u_z;
-    matrix[10] = -z;
-    matrix[11] = 0;
+    matrix[2*4 + 0] = 0;
+    matrix[2*4 + 1] = 0;
+    matrix[2*4 + 2] = -(farDist + nearDist) / deltaDist;
+    matrix[2*4 + 3] = -1;
 
-//    matrix[0]  = 1;
-//    matrix[1]  = 0;
-//    matrix[2]  = 0;
-//    matrix[3]  = 0;
+    matrix[3*4 + 0] = 0;
+    matrix[3*4 + 1] = 0;
+    matrix[3*4 + 2] = -2 * nearDist * farDist / deltaDist;
+    matrix[3*4 + 3] = 0;
+
+
+    // DEBUGTOOL
+//    matrix[0*4 + 0] = 1;
+//    matrix[0*4 + 1] = 0;
+//    matrix[0*4 + 2] = 0;
+//    matrix[0*4 + 3] = 0;
 //
-//    matrix[4]  = 0;
-//    matrix[5]  = 1;
-//    matrix[6]  = 0;
-//    matrix[7]  = 0;
+//    matrix[1*4 + 0] = 0;
+//    matrix[1*4 + 1] = 1;
+//    matrix[1*4 + 2] = 0;
+//    matrix[1*4 + 3] = 0;
 //
-//    matrix[8]  = 0;
-//    matrix[9]  = 0;
-//    matrix[10] = 1;
-//    matrix[11] = 0;
+//    matrix[2*4 + 0] = 0;
+//    matrix[2*4 + 1] = 0;
+//    matrix[2*4 + 2] = 1;
+//    matrix[2*4 + 3] = 0;
+//
+//    matrix[3*4 + 0] = 0;
+//    matrix[3*4 + 1] = 0;
+//    matrix[3*4 + 2] = 0;
+//    matrix[3*4 + 3] = 1;
+}
 
-    matrix[12] = cam_pos->x;
-    matrix[13] = cam_pos->y;
-    matrix[14] = cam_pos->z;
-    matrix[15] = 1;
+void generate_view_matrix(GLfloat *matrix, point *cam_pos, point *cam_dir, point *up)
+{
+    // Assumption: cam_dir is normalized
+    // Side = cam_dir X up
+    point side;
+    cross(cam_dir, up, &side);
+
+    // Rel up = side X cam_dir
+    point relative_up;
+    cross(&side, cam_dir, &relative_up);
+
+    // Column-major ordering, matrix[0*4 + 1] is right beneath matrix[0*4 + 0]
+    matrix[0*4 + 0] = side.x;
+    matrix[0*4 + 1] = relative_up.x;
+    matrix[0*4 + 2] = -cam_dir->x;
+    matrix[0*4 + 3] = 0;
+
+    matrix[1*4 + 0] = side.y;
+    matrix[1*4 + 1] = relative_up.y;
+    matrix[1*4 + 2] = -cam_dir->y;
+    matrix[1*4 + 3] = 0;
+
+    matrix[2*4 + 0] = side.z;
+    matrix[2*4 + 1] = relative_up.z;
+    matrix[2*4 + 2] = -cam_dir->z;
+    matrix[2*4 + 3] = 0;
+
+    matrix[3*4 + 0] = 0;
+    matrix[3*4 + 1] = 0;
+    matrix[3*4 + 2] = 0;
+    matrix[3*4 + 3] = 1;
+
+
+    // DEBUGTOOL
+//    matrix[0*4 + 0] = 1;
+//    matrix[0*4 + 1] = 0;
+//    matrix[0*4 + 2] = 0;
+//    matrix[0*4 + 3] = 0;
+//
+//    matrix[1*4 + 0] = 0;
+//    matrix[1*4 + 1] = 1;
+//    matrix[1*4 + 2] = 0;
+//    matrix[1*4 + 3] = 0;
+//
+//    matrix[2*4 + 0] = 0;
+//    matrix[2*4 + 1] = 0;
+//    matrix[2*4 + 2] = 1;
+//    matrix[2*4 + 3] = 0;
+//
+//    matrix[3*4 + 0] = 0;
+//    matrix[3*4 + 1] = 0;
+//    matrix[3*4 + 2] = 0;
+//    matrix[3*4 + 3] = 1;
 }
 
 #endif
-

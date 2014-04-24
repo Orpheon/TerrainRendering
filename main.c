@@ -154,10 +154,15 @@ int main(void)
 //    generate_transforms(&cam_pos, &cam_dir, transformation_matrix);
     // Generate the projection matrix
     GLfloat *projection_matrix = calloc(16, sizeof(GLfloat));
-    generate_projection_matrix(projection_matrix, FOV/2.0, (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.5, VIEW_DISTANCE);
+    generate_projection_matrix(projection_matrix, FOV, (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.5, VIEW_DISTANCE);
     glUniformMatrix4fv(glGetUniformLocation(shader, "projection_matrix"), 1, GL_FALSE, projection_matrix);
 
     GLfloat *view_matrix = calloc(16, sizeof(GLfloat));
+
+    point e_z;
+    e_z.x = 0;
+    e_z.y = 0;
+    e_z.z = 1;
 
     while (!glfwWindowShouldClose(window))
     {
@@ -169,7 +174,7 @@ int main(void)
         // Reset the mouse to the middle of the screen
         glfwSetCursorPos(window, WINDOW_WIDTH/2.0, WINDOW_HEIGHT/2.0);
         // Now that we have it, generate a view matrix
-        generate_view_matrix(view_matrix, &cam_pos, &cam_dir);
+        generate_view_matrix(view_matrix, &cam_pos, &cam_dir, &e_z);
         glUniformMatrix4fv(glGetUniformLocation(shader, "view_matrix"), 1, GL_FALSE, view_matrix);
         // Clear screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
