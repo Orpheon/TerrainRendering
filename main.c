@@ -59,7 +59,7 @@ int main(void)
     point cam_pos, cam_dir;
     cam_pos.x = 0.0;
     cam_pos.y = 0.0;
-    cam_pos.z = 10.0;
+    cam_pos.z = 0.0;
 
     cam_dir.x = 0.0;
     cam_dir.y = 0.0;
@@ -133,11 +133,11 @@ int main(void)
 
 
     // Set up a grid of vertexes
-    double a = 0.5, b = 0.5;
+    double a = 2.0, b = 2.0;
     const float vertexPositions[] = {
-        a, 0.0f, -2.0f, 1.0f,
-        -a, 0.0f, -2.0f, 1.0f,
-        0.0f, b, -2.0f, 1.0f
+        a, 0.0f, -4.0f, 1.0f,
+        -a, 0.0f, -4.0f, 1.0f,
+        0.0f, b, -4.0f, 1.0f
     };
 
     GLuint positionBufferObject;
