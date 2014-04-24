@@ -11,7 +11,6 @@
 void render();
 void turn_view(GLFWwindow* window, point *cam_dir);
 void move_position(GLFWwindow* window, point *cam_pos, point *cam_dir);
-void update_view(point cam_pos, point cam_dir);
 
 int main(void)
 {
@@ -60,7 +59,7 @@ int main(void)
     point cam_pos, cam_dir;
     cam_pos.x = 0.0;
     cam_pos.y = 0.0;
-    cam_pos.z = 0.0;
+    cam_pos.z = 10.0;
 
     cam_dir.x = 0.0;
     cam_dir.y = 0.0;
@@ -131,12 +130,14 @@ int main(void)
 //    glBindVertexArray(gridVAO);
 //    glVertexAttribPointer(gridVAO, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 //    glEnableVertexAttribArray(gridVAO);
+
+
     // Set up a grid of vertexes
-    double a = 20, b = -10.0;
+    double a = 0.5, b = 0.5;
     const float vertexPositions[] = {
-        0.0f, a, b, 1.0f,
-        a, 0.0f, b, 1.0f,
-        -a, 0.0f, b, 1.0f,
+        a, 0.0f, -2.0f, 1.0f,
+        -a, 0.0f, -2.0f, 1.0f,
+        0.0f, b, -2.0f, 1.0f
     };
 
     GLuint positionBufferObject;
@@ -149,9 +150,6 @@ int main(void)
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
-    // Send the transformation matrix
-
-//    generate_transforms(&cam_pos, &cam_dir, transformation_matrix);
     // Generate the projection matrix
     GLfloat *projection_matrix = calloc(16, sizeof(GLfloat));
     generate_projection_matrix(projection_matrix, FOV, (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.5, VIEW_DISTANCE);
@@ -286,22 +284,24 @@ void move_position(GLFWwindow* window, point *cam_pos, point *cam_dir)
     }
 }
 
-void update_view(point cam_pos, point cam_dir)
-{
-    float length, xrot, yrot;
-    length = sqrt(1-(cam_dir.y*cam_dir.y));
-    xrot = asin(cam_dir.x/length);
-    yrot = asin(cam_dir.y);
+// Stale and outdated code, only still exists for reference
 
-    xrot *= 180/M_PI;
-    yrot *= 180/M_PI;
-
-    if (cam_dir.z > 0)
-    {
-        xrot = 180-xrot;
-    }
-
-    glRotatef(xrot, 0.0, 1.0, 0.0);
-    glRotatef(yrot, -cam_dir.z, 0.0, cam_dir.x);
-    glTranslated(-cam_pos.x, -cam_pos.y, -cam_pos.z);
-}
+//void update_view(point cam_pos, point cam_dir)
+//{
+//    float length, xrot, yrot;
+//    length = sqrt(1-(cam_dir.y*cam_dir.y));
+//    xrot = asin(cam_dir.x/length);
+//    yrot = asin(cam_dir.y);
+//
+//    xrot *= 180/M_PI;
+//    yrot *= 180/M_PI;
+//
+//    if (cam_dir.z > 0)
+//    {
+//        xrot = 180-xrot;
+//    }
+//
+//    glRotatef(xrot, 0.0, 1.0, 0.0);
+//    glRotatef(yrot, -cam_dir.z, 0.0, cam_dir.x);
+//    glTranslated(-cam_pos.x, -cam_pos.y, -cam_pos.z);
+//}
