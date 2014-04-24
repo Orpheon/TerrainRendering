@@ -53,7 +53,7 @@ int main(void)
     glMatrixMode(GL_MODELVIEW);
 
     // Disable cursor
-//    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
     // Initialize application variables
     point cam_pos, cam_dir;

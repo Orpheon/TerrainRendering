@@ -1,4 +1,5 @@
 #include "geometry.h"
+#include "constants.h"
 
 #include <math.h>
 #include <GL/glew.h>

@@ -1,7 +1,6 @@
 #ifndef GEOMETRY_H
 #define GEOMETRY_H
 
-#include <math.h>
 #include <GL/glew.h>
 
 typedef struct
