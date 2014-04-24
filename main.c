@@ -8,7 +8,6 @@
 #include "geometry.h"
 #include "shaders.h"
 
-void render();
 void turn_view(GLFWwindow* window, point *cam_dir);
 void move_position(GLFWwindow* window, point *cam_pos, point *cam_dir);
 
@@ -45,12 +44,6 @@ int main(void)
 
     // Set the viewport to the current window specifications
     glViewport(0, 0, (GLsizei)WINDOW_WIDTH, (GLsizei)WINDOW_HEIGHT);
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    // Set the perspective (angle of sight, width-height ratio, min distance, max depth)
-    gluPerspective(FOV, (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.5, VIEW_DISTANCE);
-    glMatrixMode(GL_MODELVIEW);
 
     // Disable cursor
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
