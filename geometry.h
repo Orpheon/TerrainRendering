@@ -53,28 +53,6 @@ void generate_projection_matrix(GLfloat *matrix, double fovx, double aspect, dou
     matrix[3*4 + 1] = 0;
     matrix[3*4 + 2] = -2 * nearDist * farDist / deltaDist;
     matrix[3*4 + 3] = 0;
-
-
-    // DEBUGTOOL
-//    matrix[0*4 + 0] = 1;
-//    matrix[0*4 + 1] = 0;
-//    matrix[0*4 + 2] = 0;
-//    matrix[0*4 + 3] = 0;
-//
-//    matrix[1*4 + 0] = 0;
-//    matrix[1*4 + 1] = 1;
-//    matrix[1*4 + 2] = 0;
-//    matrix[1*4 + 3] = 0;
-//
-//    matrix[2*4 + 0] = 0;
-//    matrix[2*4 + 1] = 0;
-//    matrix[2*4 + 2] = 1;
-//    matrix[2*4 + 3] = 0;
-//
-//    matrix[3*4 + 0] = 0;
-//    matrix[3*4 + 1] = 0;
-//    matrix[3*4 + 2] = 0;
-//    matrix[3*4 + 3] = 1;
 }
 
 void generate_view_matrix(GLfloat *matrix, point *cam_pos, point *cam_dir, point *up)
@@ -108,28 +86,6 @@ void generate_view_matrix(GLfloat *matrix, point *cam_pos, point *cam_dir, point
     matrix[3*4 + 1] = 0;
     matrix[3*4 + 2] = 0;
     matrix[3*4 + 3] = 1;
-
-
-    // DEBUGTOOL
-//    matrix[0*4 + 0] = 1;
-//    matrix[0*4 + 1] = 0;
-//    matrix[0*4 + 2] = 0;
-//    matrix[0*4 + 3] = 0;
-//
-//    matrix[1*4 + 0] = 0;
-//    matrix[1*4 + 1] = 1;
-//    matrix[1*4 + 2] = 0;
-//    matrix[1*4 + 3] = 0;
-//
-//    matrix[2*4 + 0] = 0;
-//    matrix[2*4 + 1] = 0;
-//    matrix[2*4 + 2] = 1;
-//    matrix[2*4 + 3] = 0;
-//
-//    matrix[3*4 + 0] = 0;
-//    matrix[3*4 + 1] = 0;
-//    matrix[3*4 + 2] = 0;
-//    matrix[3*4 + 3] = 1;
 }
 
 #endif
