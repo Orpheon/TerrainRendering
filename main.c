@@ -73,7 +73,7 @@ int main(void)
 
 
     // Wireframe mode
-//    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 //    // Set up a grid of vertexes
 //    float *grid_vertices;
@@ -130,16 +130,33 @@ int main(void)
     const float vertexPositions[] = {
         a, 0.0f, -4.0f, 1.0f,
         -a, 0.0f, -4.0f, 1.0f,
-        0.0f, b, -4.0f, 1.0f
+        0.0f, b, -4.0f, 1.0f,
+        0.0f, -b, -4.0f, 1.0f
     };
 
-    GLuint positionBufferObject;
-    glGenBuffers(1, &positionBufferObject);
+    const GLushort indices[] = {
+        0, 1, 0, 3
+    };
 
-    glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject);
+    // Create a VAO
+    GLuint gridVAO;
+    glGenVertexArrays(1, &gridVAO);
+    glBindVertexArray(gridVAO);
+
+    // Create a VBO
+    GLuint gridVBO;
+    glGenBuffers(1, &gridVBO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, gridVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertexPositions), vertexPositions, GL_STATIC_DRAW);
 
-    // Send vertex data
+    // We also need an IBO
+    GLuint gridIBO;
+    glGenBuffers(1, &gridIBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gridIBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    // The position here is defined in the shaders with layout
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
@@ -200,7 +217,7 @@ int main(void)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Draw everything
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
 
         //Force display to be drawn now
         glFlush();
