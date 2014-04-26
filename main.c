@@ -228,18 +228,6 @@ int main(void)
     return 0;
 }
 
-void render(int num_vertices)
-{
-    // Clear screen
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    // Draw
-    glDrawElements(GL_TRIANGLES, num_vertices, GL_UNSIGNED_SHORT, 0);
-
-    //Force display to be drawn now
-    glFlush();
-}
-
 void turn_view(GLFWwindow* window, point *cam_dir)
 {
     double mouse_x, mouse_y;
