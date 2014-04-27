@@ -8,5 +8,5 @@ varying vec4 position;
 void main()
 {
     position = vertex_position;
-    gl_Position = matrix_stack * vertex_position;
+    gl_Position = matrix_stack * position;
 }

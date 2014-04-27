@@ -50,13 +50,13 @@ int main(void)
 
     // Initialize application variables
     point cam_pos, cam_dir;
-    cam_pos.x = 0.0;
-    cam_pos.y = 0.0;
-    cam_pos.z = 0.0;
+    cam_pos.x = -23.0;
+    cam_pos.y = 37.0;
+    cam_pos.z = -22.0;
 
-    cam_dir.x = 0.0;
-    cam_dir.y = 0.0;
-    cam_dir.z = -1.0;
+    cam_dir.x = 0.653162;
+    cam_dir.y = -0.532276;
+    cam_dir.z = 0.538574;
     normalize(&cam_dir);
 
     // Clear the screen
