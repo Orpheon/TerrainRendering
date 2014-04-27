@@ -59,6 +59,9 @@ int main(void)
     cam_dir.z = 0.538574;
     normalize(&cam_dir);
 
+    // Light position
+    double light_height = 5.0;
+
     // Clear the screen
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -72,7 +75,7 @@ int main(void)
     glUseProgram(shader);
 
     // Wireframe mode
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+//    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     // Set up a grid of vertexes
     float *grid_vertices;
@@ -191,6 +194,9 @@ int main(void)
 
         // Send off matrix stack to the graphics card
         glUniformMatrix4fv(glGetUniformLocation(shader, "matrix_stack"), 1, GL_FALSE, matrix_stack);
+
+        // Send off information about the light too
+        glUniform3f(glGetUniformLocation(shader, "light_position"), cam_pos.x, cam_pos.y+light_height, cam_pos.z);
 
         // Clear screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
