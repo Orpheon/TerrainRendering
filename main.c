@@ -71,72 +71,51 @@ int main(void)
     GLuint shader = shader_load("vertex.glsl", "fragment.glsl");
     glUseProgram(shader);
 
-
     // Wireframe mode
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-//    // Set up a grid of vertexes
-//    float *grid_vertices;
-//    int num_vertices = 0;
-//    grid_vertices = calloc(MAP_HEIGHT * MAP_WIDTH * 3, sizeof(float));
-//
-//    for (int i=0; i<MAP_WIDTH; i++)
-//    {
-//        for (int j=0; j<MAP_HEIGHT; j++)
-//        {
-//            grid_vertices[num_vertices++] = i*GRID_UNIT_LENGTH;
-//            grid_vertices[num_vertices++] = 0;
-//            grid_vertices[num_vertices++] = j*GRID_UNIT_LENGTH;
-//        }
-//    }
-//
-//    // Set up an index buffer
-//    GLushort *grid_indices;
-//    grid_indices = calloc((MAP_HEIGHT+1) * MAP_WIDTH * 2, sizeof(GLushort));
-//    num_vertices = 0;
-//
-//    for (int i=0; i<MAP_WIDTH; i++)
-//    {
-//        for (int j=0; j<MAP_HEIGHT+1; j++)
-//        {
-//            grid_indices[num_vertices++] = i * (MAP_HEIGHT+1) + j;
-//            grid_indices[num_vertices++] = (i+1) * (MAP_HEIGHT+1) + j;
-//        }
-//    }
-//
-//    // Create a VAO
-//    GLuint gridVAO;
-//    glGenVertexArrays(1, &gridVAO);
-//
-//    // Allocate and upload the VBO data
-//    GLuint gridVBO;
-//    glGenBuffers(1, &gridVBO);
-//    glBindBuffer(GL_ARRAY_BUFFER, gridVBO);
-//    glBufferData(GL_ARRAY_BUFFER, MAP_WIDTH * MAP_HEIGHT * sizeof(float) * 3, grid_vertices, GL_STATIC_DRAW);
-//
-//    // We also need an IBO
-//    GLuint gridIBO;
-//    glGenBuffers(1, &gridIBO);
-//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gridIBO);
-//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, num_vertices * sizeof(GLushort), grid_indices, GL_STATIC_DRAW);
-//
-//    glBindVertexArray(gridVAO);
-//    glVertexAttribPointer(gridVAO, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-//    glEnableVertexAttribArray(gridVAO);
-
-
     // Set up a grid of vertexes
-    double a = 2.0, b = 2.0;
-    const float vertexPositions[] = {
-        a, 0.0f, -4.0f, 1.0f,
-        -a, 0.0f, -4.0f, 1.0f,
-        0.0f, b, -4.0f, 1.0f,
-        0.0f, -b, -4.0f, 1.0f
-    };
+    float *grid_vertices;
+    int num_vertices = 0;
+    grid_vertices = calloc(MAP_HEIGHT * MAP_WIDTH * 3, sizeof(float));
 
-    const GLushort indices[] = {
-        0, 1, 0, 3
-    };
+    for (int i=0; i<MAP_WIDTH; i++)
+    {
+        for (int j=0; j<MAP_HEIGHT; j++)
+        {
+            grid_vertices[num_vertices++] = i*GRID_UNIT_LENGTH;
+            grid_vertices[num_vertices++] = 0;
+            grid_vertices[num_vertices++] = j*GRID_UNIT_LENGTH;
+        }
+    }
+
+    // Set up an index buffer
+    GLushort *grid_indices;
+    grid_indices = calloc(2*(MAP_HEIGHT)*(MAP_WIDTH-1) + (MAP_WIDTH-1), sizeof(GLushort));
+    num_vertices = 0;
+
+    for (int i=0; i<MAP_WIDTH-1; i++)
+    {
+        // If this is an even row (starting with 0)
+        if (i%2 == 0)
+        {
+            for (int j=0; j<MAP_HEIGHT; j++)
+            {
+                grid_indices[num_vertices++] = i * (MAP_HEIGHT) + j;
+                grid_indices[num_vertices++] = (i+1) * (MAP_HEIGHT) + j;
+            }
+            grid_indices[num_vertices++] = (i+1) * (MAP_HEIGHT) + (MAP_HEIGHT-1);
+        }
+        else
+        {
+            for (int j=MAP_HEIGHT-1; j>=0; j--)
+            {
+                grid_indices[num_vertices++] = i * (MAP_HEIGHT) + j;
+                grid_indices[num_vertices++] = (i+1) * (MAP_HEIGHT) + j;
+            }
+            grid_indices[num_vertices++] = (i+1)*MAP_HEIGHT;
+        }
+    }
 
     // Create a VAO
     GLuint gridVAO;
@@ -148,17 +127,17 @@ int main(void)
     glGenBuffers(1, &gridVBO);
 
     glBindBuffer(GL_ARRAY_BUFFER, gridVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertexPositions), vertexPositions, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, MAP_WIDTH * MAP_HEIGHT * sizeof(float) * 3, grid_vertices, GL_STATIC_DRAW);
 
     // We also need an IBO
     GLuint gridIBO;
     glGenBuffers(1, &gridIBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gridIBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, num_vertices * sizeof(GLushort), grid_indices, GL_STATIC_DRAW);
 
     // The position here is defined in the shaders with layout
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
     // Allocate all the different matrices we'll need
     GLfloat *matrix_stack = calloc(16, sizeof(GLfloat));
@@ -217,7 +196,7 @@ int main(void)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Draw everything
-        glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
+        glDrawElements(GL_TRIANGLE_STRIP, num_vertices, GL_UNSIGNED_SHORT, 0);
 
         //Force display to be drawn now
         glFlush();
