@@ -82,9 +82,9 @@ int main(void)
     int num_vertices = 0;
     grid_vertices = calloc(MAP_HEIGHT * MAP_WIDTH * 3, sizeof(float));
 
-    for (int i=0; i<MAP_WIDTH; i++)
+    for (int i=(int)(-MAP_WIDTH/2); i<(int)(MAP_WIDTH/2); i++)
     {
-        for (int j=0; j<MAP_HEIGHT; j++)
+        for (int j=(int)(-MAP_HEIGHT/2); j<(int)(MAP_HEIGHT/2); j++)
         {
             grid_vertices[num_vertices++] = i*GRID_UNIT_LENGTH;
             grid_vertices[num_vertices++] = 0;
